@@ -26,14 +26,16 @@ io.on('connection', (connection) => {
         io.emit('usersUpdate', Object.fromEntries(usersData.entries()))
     })
 
-    connection.on('addEmoji', (userData) => {
+    connection.on('sendEmojiForUser', (userData) => {
         usersData.set(Object.keys(userData)[0], Object.values(userData)[0])
         io.emit('usersUpdate', Object.fromEntries(usersData.entries()))
     })
 
     connection.on('disconnect', () => {
-        usersConnected.delete(connection.id)
-        io.emit('usersUpdate', Object.fromEntries(usersConnected.entries()))
+        const userName = usersConnected.get(connection.id)
+        usersData.delete(userName)
+        console.log('User ' + userName + ' disconnected')
+        io.emit('usersUpdate', Object.fromEntries(usersData.entries()))
     })
 })
 
